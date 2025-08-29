@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Commit Telegram Bot - Первоначальная настройка</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <div class="container">
+        <div class="row justify-content-center mt-5">
+            <div class="col-md-10 col-lg-8">
+                <div class="card shadow">
+                    <div class="card-body p-5">
+                        <div class="text-center mb-4">
+                            <i class="fas fa-rocket fa-3x text-primary mb-3"></i>
+                            <h2 class="card-title">Добро пожаловать в Git Commit Telegram Bot!</h2>
+                            <p class="text-muted">Это ваш первый запуск. Давайте настроим приложение</p>
+                        </div>
+
+                        <form method="POST" action="/first-time-setup">
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <h5><i class="fab fa-google me-2"></i>Google Gemini API</h5>
+                                        <div class="mb-3">
+                                            <label for="gemini_api_key" class="form-label">API Key Gemini *</label>
+                                            <input type="password" class="form-control" id="gemini_api_key" name="gemini_api_key" required>
+                                            <div class="form-text">
+                                                Получите ключ в <a href="https://makersuite.google.com/app/apikey" target="_blank">Google AI Studio</a>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="mb-4">
+                                        <h5><i class="fab fa-telegram me-2"></i>Telegram Bot</h5>
+                                        <div class="mb-3">
+                                            <label for="telegram_bot_token" class="form-label">Bot Token *</label>
+                                            <input type="password" class="form-control" id="telegram_bot_token" name="telegram_bot_token" required>
+                                            <div class="form-text">
+                                                Получите токен у <a href="https://t.me/botfather" target="_blank">@BotFather</a>
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="telegram_channel_id" class="form-label">Channel ID *</label>
+                                            <input type="text" class="form-control" id="telegram_channel_id" name="telegram_channel_id" placeholder="@channel_name или -1001234567890" required>
+                                            <div class="form-text">
+                                                ID канала или @username (добавьте бота в канал как администратора)
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-6">
+                                    <div class="mb-4">
+                                        <h5><i class="fas fa-user-shield me-2"></i>Администратор</h5>
+                                        <div class="mb-3">
+                                            <label for="admin_username" class="form-label">Имя пользователя</label>
+                                            <input type="text" class="form-control" id="admin_username" name="admin_username" value="admin">
+                                            <div class="form-text">
+                                                Имя первого пользователя-администратора
+                                            </div>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="admin_password" class="form-label">Пароль</label>
+                                            <input type="password" class="form-control" id="admin_password" name="admin_password" value="admin123">
+                                            <div class="form-text">
+                                                Пароль для входа в систему
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div class="alert alert-info">
+                                        <h6><i class="fas fa-info-circle me-2"></i>Важно:</h6>
+                                        <ul class="mb-0">
+                                            <li>Запомните логин и пароль администратора</li>
+                                            <li>После настройки вы сможете войти в систему</li>
+                                            <li>Все настройки сохранятся в файл .env</li>
+                                        </ul>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    <i class="fas fa-rocket me-2"></i>Запустить приложение
+                                </button>
+                            </div>
+                        </form>
+
+                        <div class="mt-4">
+                            <div class="alert alert-warning">
+                                <h6><i class="fas fa-exclamation-triangle me-2"></i>Инструкция по настройке:</h6>
+                                <ol class="mb-0">
+                                    <li>Создайте бота в Telegram через @BotFather</li>
+                                    <li>Добавьте бота в ваш канал как администратора</li>
+                                    <li>Получите API ключ Gemini в Google AI Studio</li>
+                                    <li>Заполните все обязательные поля (отмечены *)</li>
+                                    <li>Настройте имя и пароль администратора</li>
+                                    <li>Нажмите "Запустить приложение"</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
