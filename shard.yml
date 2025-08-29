@@ -1,0 +1,41 @@
+name: git-commit-telegram-bot
+version: 0.1.0
+
+authors:
+  - Your Name <your.email@example.com>
+
+targets:
+  git-commit-telegram-bot:
+    main: src/git_commit_telegram_bot.cr
+
+dependencies:
+  kemal:
+    github: kemalcr/kemal
+    version: ~> 0.1.0
+  db:
+    github: crystal-lang/crystal-db
+    version: ~> 0.12.0
+  sqlite3:
+    github: crystal-lang/crystal-sqlite3
+    version: ~> 0.20.0
+  http_client:
+    github: crystal-lang/http_client
+    version: ~> 0.1.0
+  json:
+    github: crystal-lang/json
+    version: ~> 0.1.0
+  bcrypt:
+    github: crystal-lang/crystal-bcrypt
+    version: ~> 0.1.0
+  dotenv:
+    github: gdotdesign/cr-dotenv
+    version: ~> 0.6.0
+
+development_dependencies:
+  ameba:
+    github: crystal-ameba/ameba
+    version: ~> 1.5.0
+
+crystal: ">= 1.0.0"
+
+license: MIT

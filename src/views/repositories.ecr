@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Git Commit Telegram Bot - Репозитории</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="/css/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/dashboard">
+                <i class="fas fa-robot me-2"></i>Git Commit Bot
+            </a>
+            <div class="navbar-nav ms-auto">
+                <a class="nav-link active" href="/repositories">
+                    <i class="fas fa-code-branch me-1"></i>Репозитории
+                </a>
+                <a class="nav-link" href="/logout">
+                    <i class="fas fa-sign-out-alt me-1"></i>Выйти
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mt-4">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1>
+                        <i class="fas fa-code-branch me-2"></i>Репозитории
+                    </h1>
+                    <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRepoModal">
+                        <i class="fas fa-plus me-2"></i>Добавить репозиторий
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <% if flash_message = env.flash("success") %>
+            <div class="alert alert-success" role="alert">
+                <%= flash_message %>
+            </div>
+        <% end %>
+
+        <% if flash_message = env.flash("error") %>
+            <div class="alert alert-danger" role="alert">
+                <%= flash_message %>
+            </div>
+        <% end %>
+
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">
+                            <i class="fas fa-list me-2"></i>Список репозиториев
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <% if repositories.empty? %>
+                            <div class="text-center text-muted py-5">
+                                <i class="fas fa-folder-open fa-3x mb-3"></i>
+                                <h5>Нет добавленных репозиториев</h5>
+                                <p>Добавьте ваши репозитории для автоматической обработки коммитов</p>
+                                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addRepoModal">
+                                    <i class="fas fa-plus me-2"></i>Добавить первый репозиторий
+                                </button>
+                            </div>
+                        <% else %>
+                            <div class="table-responsive">
+                                <table class="table table-hover">
+                                    <thead>
+                                        <tr>
+                                            <th>Название</th>
+                                            <th>URL</th>
+                                            <th>Провайдер</th>
+                                            <th>Вебхук URL</th>
+                                            <th>Действия</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <% repositories.each do |repo| %>
+                                            <tr>
+                                                <td>
+                                                    <strong><%= repo.name %></strong>
+                                                </td>
+                                                <td>
+                                                    <a href="<%= repo.url %>" target="_blank" class="text-decoration-none">
+                                                        <%= repo.url %>
+                                                        <i class="fas fa-external-link-alt ms-1"></i>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <span class="badge bg-<%= repo.provider == "gitlab" ? "orange" : "purple" %>">
+                                                        <%= repo.provider.upcase %>
+                                                    </span>
+                                                </td>
+                                                <td>
+                                                    <code class="small">
+                                                        <%= env.request.host_with_port %>/webhook/<%= repo.provider %>
+                                                    </code>
+                                                    <button class="btn btn-sm btn-outline-secondary ms-2" onclick="copyToClipboard('<%= env.request.host_with_port %>/webhook/<%= repo.provider %>')">
+                                                        <i class="fas fa-copy"></i>
+                                                    </button>
+                                                </td>
+                                                <td>
+                                                    <button class="btn btn-sm btn-outline-danger">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        <% end %>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal для добавления репозитория -->
+    <div class="modal fade" id="addRepoModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">
+                        <i class="fas fa-plus me-2"></i>Добавить репозиторий
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <form method="POST" action="/repositories">
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="name" class="form-label">Название репозитория</label>
+                            <input type="text" class="form-control" id="name" name="name" required>
+                            <div class="form-text">Например: Frontend, API Server, Mobile APP</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="url" class="form-label">URL репозитория</label>
+                            <input type="url" class="form-control" id="url" name="url" required>
+                            <div class="form-text">Полный URL к репозиторию</div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="provider" class="form-label">Провайдер</label>
+                            <select class="form-select" id="provider" name="provider" required>
+                                <option value="">Выберите провайдер</option>
+                                <option value="gitlab">GitLab</option>
+                                <option value="forgejo">Forgejo/Gitea</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>Добавить
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(function() {
+                alert('URL скопирован в буфер обмена!');
+            });
+        }
+    </script>
+</body>
+</html>
