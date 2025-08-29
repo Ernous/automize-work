@@ -6,8 +6,8 @@ require "http/client"
 require "json"
 require "bcrypt"
 
-# Load environment variables
-Dotenv.load
+# Load environment variables if .env file exists
+Dotenv.load if File.exists?(".env")
 
 # Database setup
 DB.open "sqlite3://./data/app.db" do |db|
@@ -71,8 +71,11 @@ end
 get "/" do |env|
   if env.session.string?("user_id")
     env.redirect "/dashboard"
-  else
+  elsif ConfigService.is_configured?
     render "src/views/login.ecr"
+  else
+    # Если конфигурация не настроена, показываем setup страницу
+    env.redirect "/first-time-setup"
   end
 end
 
@@ -126,6 +129,50 @@ post "/register" do |env|
   else
     env.flash("error", "Please fill all fields")
     env.redirect "/register"
+  end
+end
+
+get "/first-time-setup" do |env|
+  # Первоначальная настройка без авторизации
+  if ConfigService.is_configured?
+    env.redirect "/"
+  else
+    render "src/views/first_time_setup.ecr"
+  end
+end
+
+post "/first-time-setup" do |env|
+  # Обработка первоначальной настройки
+  gemini_api_key = env.params.body["gemini_api_key"]?
+  telegram_bot_token = env.params.body["telegram_bot_token"]?
+  telegram_channel_id = env.params.body["telegram_channel_id"]?
+  
+  if gemini_api_key && telegram_bot_token && telegram_channel_id
+    # Сохраняем конфигурацию
+    ConfigService.save_config({
+      "GEMINI_API_KEY" => gemini_api_key,
+      "TELEGRAM_BOT_TOKEN" => telegram_bot_token,
+      "TELEGRAM_CHANNEL_ID" => telegram_channel_id
+    })
+    
+    # Создаем первого пользователя-администратора
+    username = env.params.body["admin_username"]? || "admin"
+    password = env.params.body["admin_password"]? || "admin123"
+    
+    if username && password
+      begin
+        password_hash = BCrypt::Password.create(password)
+        user = User.create(username, password_hash)
+        env.flash("success", "Конфигурация сохранена! Создан пользователь: #{username} с паролем: #{password}")
+      rescue ex
+        env.flash("success", "Конфигурация сохранена! Создайте пользователя вручную.")
+      end
+    end
+    
+    env.redirect "/"
+  else
+    env.flash("error", "Пожалуйста, заполните все обязательные поля")
+    env.redirect "/first-time-setup"
   end
 end
 
